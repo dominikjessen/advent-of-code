@@ -33,9 +33,8 @@ def part_two(inp: str):
   time = int(t.replace(' ', '').split(':')[1])
   record = int(r.replace(' ', '').split(':')[1])
 
-  ans = 1
   speed = 0
-  hold_beats = []
+  beats = 0
 
   # For early break
   best_distance = 0
@@ -46,15 +45,13 @@ def part_two(inp: str):
       best_distance = distance
 
     if distance > record:
-      hold_beats.append(j)
+      beats += 1
     
     # Function of distance is parabola, so can break when first distance is found that's < best and < record
     if distance < best_distance and distance <= record:
       break
-  
-  ans *= len(hold_beats)
-  
-  print('Answer 2 is:', ans)
+    
+  print('Answer 2 is:', beats)
 
 
 # Input
