@@ -1,5 +1,3 @@
-
-
 ###############
 #   PART 1    #
 ###############
@@ -31,13 +29,11 @@ def get_handtype_value(h: str) -> int:
     if v[1] == 3:
       if sm[i+1][1] == 2:
         return 5
-      else:
-        return 4
+      return 4
     if v[1] == 2:
       if sm[i+1][1] == 2:
         return 3
-      else:
-        return 2
+      return 2
     if v[1] == 1:
       return 1
     
@@ -47,26 +43,20 @@ def a_beats_b(a: str, b: str) -> bool:
 
   if v_a > v_b:
     return True
-  elif v_a == v_b:
+  if v_a == v_b:
     i = 0
     for i in range(len(a)):
       c_a = V1[a[i]] if a[i] in V1 else int(a[i])
       c_b = V1[b[i]] if b[i] in V1 else int(b[i])
       if c_a > c_b:
         return True
-      elif c_a < c_b:
+      if c_a < c_b:
         return False
-  else:
-    return False
+  return False
   
 ###############
 #   PART 2    #
 ###############
-
-# Different map for part two with J as overall lowest card
-V2 = {
-  'A': 14, 'K': 13, 'Q': 12, 'T': 10, 'J': 1,
-}
 
 def get_handtype_value_joker(h: str) -> int:
   # Get number of jokers
@@ -98,33 +88,34 @@ def get_handtype_value_joker(h: str) -> int:
     if v[1] == 3:
       if sm[i+1][1] == 2:
         return 5
-      else:
-        return 4
+      return 4
     if v[1] == 2:
       if sm[i+1][1] == 2:
         return 3
-      else:
-        return 2
+      return 2
     if v[1] == 1:
       return 1
 
 def a_beats_b_joker(a: str, b: str) -> bool:
+  # Different map for part two with J as overall lowest card
+  V2 = {
+    'A': 14, 'K': 13, 'Q': 12, 'T': 10, 'J': 1,
+  }
   v_a = get_handtype_value_joker(a)
   v_b = get_handtype_value_joker(b)
 
   if v_a > v_b:
     return True
-  elif v_a == v_b:
+  if v_a == v_b:
     i = 0
     for i in range(len(a)):
       c_a = V2[a[i]] if a[i] in V2 else int(a[i])
       c_b = V2[b[i]] if b[i] in V2 else int(b[i])
       if c_a > c_b:
         return True
-      elif c_a < c_b:
+      if c_a < c_b:
         return False
-  else:
-    return False
+  return False
   
 # Basically bubble sort with weird sorting rule
 def part_one(inp: str):
@@ -165,7 +156,7 @@ def part_two(inp: str):
 
 # Input
 example = open('./example.txt').read().strip()
-inp = open('./input.txt').read().strip()
+inp1 = open('./input.txt').read().strip()
 
-# part_one(inp)
-part_two(inp)
+part_one(inp1)
+part_two(inp1)
