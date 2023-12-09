@@ -38,8 +38,31 @@ def part_one(inp: str):
   print('Answer 1 is:', s)
 
 
+def part_two(inp: str):
+  # Build histories
+  histories = []
+  for line in inp.splitlines():
+    base_row = [int(x) for x in line.strip().split()]
+    histories.append(build_history(base_row))
+
+  s = 0
+  for history in histories:
+    n = len(history)-1
+    while n >= 0:
+      if n == len(history)-1:
+        history[n] = [0] + history[n]
+      else:
+        firstVal = history[n][0] - history[n+1][0]
+        history[n] = [firstVal] + history[n]
+      n -= 1
+    s += history[0][0]
+
+  print('Answer 2 is:',s)
+  
+
 # Input
 i = open('./input.txt').read().strip()
 e = open('./example.txt').read().strip()
 
 part_one(i)
+part_two(i)
