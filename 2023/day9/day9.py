@@ -16,6 +16,36 @@ def build_history(row: List[int]) -> List[List[int]]:
       return history
     i += 1
   
+# Create a copy of history with extrapolated value at end
+# NOTE: because of append via list concatenation a shallow copy suffices. With .append() use copy.deepcopy()
+def extrapolate_history_end(history: List[List[int]]) -> List[List[int]]:
+  extrapolated = history[:]
+  n = len(extrapolated)-1
+  while n >= 0:
+    if n == len(extrapolated)-1:
+      extrapolated[n] = extrapolated[n] + [0]
+    else:
+      nextVal = extrapolated[n+1][-1] + extrapolated[n][-1]
+      extrapolated[n] = extrapolated[n] + [nextVal]
+    n -= 1
+  
+  return extrapolated
+
+# Create a copy of history with extrapolated value at front
+# NOTE: because of append via list concatenation a shallow copy suffices.
+def extrapolate_history_front(history: List[List[int]]) -> List[List[int]]:
+  extrapolated = history[:]
+  n = len(extrapolated)-1
+  while n >= 0:
+    if n == len(extrapolated)-1:
+      extrapolated[n] = [0] + extrapolated[n]
+    else:
+      firstVal = extrapolated[n][0] - extrapolated[n+1][0]
+      extrapolated[n] = [firstVal] + extrapolated[n]
+    n -= 1
+  
+  return extrapolated
+
 def part_one(inp: str):
   # Build histories
   histories = []
@@ -25,18 +55,10 @@ def part_one(inp: str):
 
   s = 0
   for history in histories:
-    n = len(history)-1
-    while n >= 0:
-      if n == len(history)-1:
-        history[n].append(0)
-      else:
-        nextVal = history[n+1][-1] + history[n][-1]
-        history[n].append(nextVal)
-      n -= 1
-    s += history[0][-1]
+    extrapolated = extrapolate_history_end(history)
+    s += extrapolated[0][-1]
 
   print('Answer 1 is:', s)
-
 
 def part_two(inp: str):
   # Build histories
@@ -47,15 +69,8 @@ def part_two(inp: str):
 
   s = 0
   for history in histories:
-    n = len(history)-1
-    while n >= 0:
-      if n == len(history)-1:
-        history[n] = [0] + history[n]
-      else:
-        firstVal = history[n][0] - history[n+1][0]
-        history[n] = [firstVal] + history[n]
-      n -= 1
-    s += history[0][0]
+    extrapolated = extrapolate_history_front(history)
+    s += extrapolated[0][0]
 
   print('Answer 2 is:',s)
   
