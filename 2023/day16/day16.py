@@ -4,6 +4,8 @@
 def is_valid(matrix, x, y) -> bool:
   return False if x < 0 or x >= len(matrix) or y < 0 or y >= len(matrix[x]) else True
 
+# known_coni
+
 def get_energized_tiles(m: list[list[str]], start: tuple[tuple[int,int],str]) -> int:
   energized = {}
 
@@ -90,9 +92,40 @@ def part_one(inp: str):
   
   print('Answer 1 is:', ans)
 
+# NOTE: Memoized implementation notes (no time for it...)
+# Could technically memoize the beam configs per run to speed up
+# Global map of known_beams with final energized values (i.e. eventually that configuration leads to energized level x)
+# One energized method internal map of active_beams and their history (i.e. grows every step)
+# At every iteration, keep track of all active beams in run and their current positions (from curr)
+# When hitting a splitter, add two new beams to active_beams --> Might want to only add if valid but probably doesn't matter
+# Have to match curr node to an active beam to advance the right beam
+# At start of loop check if current_active_beams is in known_beams -> return if yes
+# At end of function add entire history of all active_beams during this run to the known_beams map with final energized level
+
+# Just brute force all starts in a few seconds with PyPy
+def part_two(inp: str):
+  m = [[c for c in list(r)] for r in inp.splitlines()]
+  max_energized = 0
+  starts: list[tuple[tuple[int,int],str]] = []
+
+  for r in range(len(m)):
+    starts.append(((r,0), 'r'))
+    starts.append(((r,len(m)-1), 'l'))
+  
+  for c in range(len(m[0])):
+    starts.append(((0,c), 'd'))
+    starts.append(((len(m[0])-1,c), 'u'))
+  
+  for s in starts:
+    curr_energized = get_energized_tiles(m, s)
+    if curr_energized > max_energized:
+      max_energized = curr_energized
+  
+  print('Answer 2 is:', max_energized)
+
 # Input
 i = open('./input.txt').read().strip()
 e = open('./example.txt').read().strip()
 
 part_one(i)
-# part_two(i)
+part_two(i)
