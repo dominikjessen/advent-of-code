@@ -4,15 +4,14 @@
 def is_valid(matrix, x, y) -> bool:
   return False if x < 0 or x >= len(matrix) or y < 0 or y >= len(matrix[x]) else True
 
-def part_one(inp: str):
-  m = [[c for c in list(r)] for r in inp.splitlines()]
+def get_energized_tiles(m: list[list[str]], start: tuple[tuple[int,int],str]) -> int:
   energized = {}
 
   nodes: list[tuple[tuple[int,int],str]] = []
-  nodes.append(((0,0), 'r'))
+  nodes.append(start)
+
   seen_with_dir = []
-  iterations = 1000
-  while len(nodes) > 0: # should be len nodes
+  while len(nodes) > 0:
     curr = nodes.pop()
 
     if not is_valid(m, curr[0][0], curr[0][1]):
@@ -83,15 +82,13 @@ def part_one(inp: str):
       else:
         AssertionError
 
-  # for r in range(len(m)):
-  #   for c in range(len(m[r])):
-  #     if str(str(r)+'-'+str(c)) in energized:
-  #       m[r][c] = '#'
-  #     else:
-  #       m[r][c] = '.'
-  #   print(''.join(m[r]))
+  return len(list(energized.keys()))
+
+def part_one(inp: str):
+  m = [[c for c in list(r)] for r in inp.splitlines()]
+  ans = get_energized_tiles(m, ((0,0), 'r'))
   
-  print('Answer 1 is:', len(list(energized.keys())))
+  print('Answer 1 is:', ans)
 
 # Input
 i = open('./input.txt').read().strip()
