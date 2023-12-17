@@ -3,7 +3,7 @@ import heapq
 def is_valid(matrix, x, y) -> bool:
   return False if x < 0 or x >= len(matrix) or y < 0 or y >= len(matrix[x]) else True
 
-def hot_dijkstra(grid: list[list[int]], target: tuple[int,int], max_moves_direction = 3) -> int:
+def ultra_hot_dijkstra(grid: list[list[int]], target: tuple[int,int], min_moves_direction = 0, max_moves_direction = 3) -> int:
   seen = set()
 
   # Priority queue: (Current heat, row, col, d_r, d_c, number_of_same_dir)
@@ -12,8 +12,8 @@ def hot_dijkstra(grid: list[list[int]], target: tuple[int,int], max_moves_direct
   while pq:
     heat, r, c, dr, dc, steps_since_last_turn = heapq.heappop(pq)
 
-    # Return incurred heat if at target
-    if (r,c) == target:
+    # Return incurred heat if at target and we've gone straight at least min times
+    if (r,c) == target and steps_since_last_turn > min_moves_direction:
       return heat
   
     # Prevent looping
@@ -22,13 +22,17 @@ def hot_dijkstra(grid: list[list[int]], target: tuple[int,int], max_moves_direct
 
     seen.add((r,c,dr,dc,steps_since_last_turn))
 
-    # Can still explore in same direction
+    # Move straight while you have to
     if steps_since_last_turn < max_moves_direction and (dr,dc) != (0,0):
       new_r = r + dr
       new_c = c + dc
 
       if is_valid(grid, new_r, new_c):
         heapq.heappush(pq, (heat + grid[new_r][new_c], new_r, new_c, dr, dc, steps_since_last_turn + 1))
+      
+      # Skip trying to turn from current position if we still have to go straight
+      if steps_since_last_turn < min_moves_direction:
+        continue
 
     # u, r, d, l
     DR = [-1,0,1,0]
@@ -54,7 +58,8 @@ def part_one(inp: str):
   grid = [[int(c) for c in list(r)] for r in inp.splitlines()]
   target = (len(grid)-1,len(grid[0])-1)
 
-  print('Answer 1 is:', hot_dijkstra(grid, target, 3))
+  print('Answer 1 is:', ultra_hot_dijkstra(grid, target, 0, 3))
+  print('Answer 2 is:', ultra_hot_dijkstra(grid, target, 4, 10))
 
 # Input
 i = open('./input.txt').read().strip()
