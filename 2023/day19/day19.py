@@ -1,3 +1,6 @@
+from collections import deque
+from copy import deepcopy
+
 def rule_applies(rule: str, part) -> bool:
   letter,operator,value = rule[0],rule[1],rule[2:]
   if operator == '<':
@@ -23,7 +26,7 @@ def prepare_parts(part_str: str) -> []:
   
   return parts
 
-def prepare_workflows(workflow_str: str) -> {}:
+def prepare_workflows(workflow_str: str) -> dict[str,dict['rules': list[str], 'destionations': list[str], 'fallback': str]]:
   workflows = {}
   for line in [l for l in workflow_str.splitlines()]:
     workflow_rules = []
@@ -73,8 +76,68 @@ def part_one(inp: str):
  
   print('Answer 1 is:',s)
 
+def part_two(inp: str):
+  w,p = inp.split('\n\n')
+  workflows = prepare_workflows(w)
+
+  initial_part = {'x': [1,4000],'m': [1,4000],'a': [1,4000],'s': [1,4000]}
+  current_part = deepcopy(initial_part)
+
+  queue = deque()
+  queue.append(('in', current_part))
+  accepted_parts = []
+
+  while queue:
+    (workflow,part) = queue.popleft()
+
+    if workflow == 'R':
+      continue
+
+    if workflow == 'A':
+      accepted_parts.append(part)
+      continue
+
+    # part_before_rules = deepcopy(part)
+    inverse_part = deepcopy(part)
+
+    for i,rule in enumerate(workflows[workflow]['rules']):
+      letter,operator,value = rule[0],rule[1],rule[2:]
+
+      # Adjust lower bound
+      if operator == '>':
+        part[letter][0] = int(value) + 1 # NOTE: + 1 ???
+        inverse_part[letter][1] = int(value)
+
+      # Adjust upper bound
+      if operator == '<':
+        part[letter][1] = int(value) - 1 # NOTE: - 1 ???
+        inverse_part[letter][0] = int(value)
+
+      queue.append((workflows[workflow]['destinations'][i], part))
+
+      # Reset partition for next rule to inverse of current rule
+      part = deepcopy(inverse_part)
+
+    queue.append((workflows[workflow]['fallback'], inverse_part))
+
+
+  s2 = 0
+  for acc in accepted_parts:
+    x = acc['x'][1] - acc['x'][0] + 1
+    m = acc['m'][1] - acc['m'][0] + 1
+    a = acc['a'][1] - acc['a'][0] + 1
+    s = acc['s'][1] - acc['s'][0] + 1
+
+    combinations = x * m * a * s
+    s2 += combinations
+  
+  print('Answer 2 is:', s2)
+
+  pass
+
 # Input
 i = open('./input.txt').read().strip()
 e = open('./example.txt').read().strip()
 
-part_one(i)
+# part_one(i)
+part_two(i)
