@@ -1,4 +1,5 @@
 from collections import deque
+from math import lcm
 
 def ff_receives_pulse(ff_name, ff, pulse_type: str, pulses):
   # print('<< FF',ff_name,'receives',pulse_type)
@@ -75,9 +76,76 @@ def part_one(inp: str, runs: int = 1000):
   print('Lows:',lows)
   print('Answer 1 is:',highs*lows)
 
+def find_cycle_length(inp: str, cycle_target: str) -> int:
+  cycle_target = cycle_target.lower() # Just in case
+  broadcaster = {}
+  ff_map = {}
+  c_map = {}
+
+  # Prep modules
+  for line in inp.splitlines():
+    node, o = line.split(' -> ')
+    outputs = o.split(', ')
+
+    if node == 'broadcaster':
+      broadcaster = outputs
+    elif node[0] == '%':
+      ff_map[node[1:]] = { 'is_on': False, 'outputs': outputs }
+    elif node[0] == '&':
+        c_map[node[1:]] = { 'last_inputs': {}, 'outputs': outputs }
+  
+  # Prep all conjunction modules with last_inputs
+  for ff in ff_map.items():
+    for ff_o in ff[1]['outputs']:
+      if ff_o in c_map:
+        c_map[ff_o]['last_inputs'][ff[0]] = 'LOW'
+  
+  for c in c_map.items():
+    for c_o in c[1]['outputs']:
+      if c_o in c_map:
+        c_map[c_o]['last_inputs'][c[0]] = 'LOW'
+
+  runs = 0
+  while True:
+    runs += 1
+
+    # (pulse_type, source_module, target_module)
+    pulses: deque[tuple[str,str,str]] = deque()
+    for init_o in broadcaster:
+      pulses.append(('LOW', 'broadcaster', init_o))
+      
+    while pulses:
+      (pulse_type, source_module, target_module) = pulses.popleft()
+
+      # Found cycle, because 'HIGH' was sent from target_source
+      if source_module == cycle_target and pulse_type == 'HIGH':
+        # print('Found first node cycle in',runs,'runs')
+        return runs
+
+      if target_module in ff_map:
+        ff_receives_pulse(target_module, ff_map[target_module], pulse_type, pulses)
+      elif target_module in c_map:
+        c_receives_pulse_from(target_module, c_map[target_module], source_module, pulse_type, pulses)
+
+# Explanation for Part 2:
+
+# RX has only one source module for my input, which is a conjunction
+# That module itself has 4 conjunction modules as inputs
+# So we find the cycle length for each of those 4 -> i.e. the first time it sends a HIGH to that intermediate conjunction module
+# Then we just get the LCM of all 4 (sync'd cycles) to get our answer 
+# -> To send a LOW to RX, all input nodes for intermediate need to last have sent a HIGH
+def part_two(inp: str):
+  a = find_cycle_length(inp, 'ct')
+  b = find_cycle_length(inp, 'kp')
+  c = find_cycle_length(inp, 'ks')
+  d = find_cycle_length(inp, 'xc')
+
+  print('Answer 2 is:', lcm(a,b,c,d))
+
 # Input
 i = open('./input.txt').read().strip()
 e = open('./example.txt').read().strip()
 e2 = open('./example2.txt').read().strip()
 
 part_one(i)
+part_two(i)
