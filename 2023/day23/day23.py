@@ -14,7 +14,8 @@ def dfs(graph,node,end):
 
   # For each edge out of node, try walking that path to the end
   for next_node in graph[node]:
-    m = max(m, dfs(graph,next_node,end) + graph[node][next_node])
+    if next_node not in seen:
+      m = max(m, dfs(graph,next_node,end) + graph[node][next_node])
 
   seen.remove(node) # Remove again for next path
 
@@ -88,4 +89,14 @@ possible_directions = {
   '.': [(-1,0),(0,1),(1,0),(0,-1)]
 }
 
+possible_directions_2 = {
+  '^': [(-1,0),(0,1),(1,0),(0,-1)],
+  '>': [(-1,0),(0,1),(1,0),(0,-1)],
+  'v': [(-1,0),(0,1),(1,0),(0,-1)],
+  '<': [(-1,0),(0,1),(1,0),(0,-1)],
+  '.': [(-1,0),(0,1),(1,0),(0,-1)]
+}
+
 part_one(i, possible_directions)
+# Part 2
+part_one(i, possible_directions_2)
