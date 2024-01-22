@@ -1,3 +1,5 @@
+from collections import deque
+
 # Helper fn to check overlapping intervals (   [  ) ] --> true, bc s2 < e1 || ( ) [] --> false
 def overlapping(one: list[int,int,int,int,int,int], two: list[int,int,int,int,int,int]) -> bool:
   return max(one[0], two[0]) <= min(one[3], two[3]) and max(one[1], two[1]) <= min(one[4], two[4])
@@ -50,9 +52,40 @@ def part_one(inp: str):
   print('Answer 1 is:',ans)
   pass
 
+def part_two(inp: str):
+  # Turn bricks into list [x1, y1, z1, x2, y2, z2] and sort by z (i.e. height)
+  bricks = [list(map(int, line.replace('~', ',').split(','))) for line in inp.splitlines()]
+  bricks.sort(key=lambda brick: brick[2])
+
+  # Move bricks all the way down starting at lowest brick
+  drop_bricks(bricks)
+
+  # Determine which bricks support which other bricks, and which bricks are supported by which other bricks (bidirectional maps)
+  k_supports, k_supported_by = get_brick_support_maps(bricks)
+
+  ans = 0
+  # When disintegrating a block, create a queue of all blocks that will fall as result, until no more falling occurs
+  for i in range(len(bricks)):
+    q = deque(j for j in k_supports[i] if len(k_supported_by[j]) == 1)
+    falling = set(q)
+    falling.add(i)
+
+    while q:
+      x = q.popleft()
+      # See if there are blocks that aren't already falling that are now falling as a result and might remove support
+      for k in k_supports[x] - falling:
+        if k_supported_by[k] <= falling:
+          q.append(k)
+          falling.add(k)
+          
+    ans += len(falling) - 1 # -1 to not count initial disintegrated block
+
+  print('Answer 2 is:', ans)
+  pass
+
 # Input
 i = open('./input.txt').read().strip()
 e = open('./example.txt').read().strip()
 
 part_one(i)
-# part_two(e)
+part_two(i)
