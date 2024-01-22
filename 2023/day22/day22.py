@@ -1,13 +1,8 @@
-# NOTE: Problem assumes z index is horizontal!
-def part_one(inp: str):
-  # Helper fn to check overlapping intervals (   [  ) ] --> true, bc s2 < e1 || ( ) [] --> false
-  def overlapping(one, two) -> bool:
-    return max(one[0], two[0]) <= min(one[3], two[3]) and max(one[1], two[1]) <= min(one[4], two[4])
+# Helper fn to check overlapping intervals (   [  ) ] --> true, bc s2 < e1 || ( ) [] --> false
+def overlapping(one: list[int,int,int,int,int,int], two: list[int,int,int,int,int,int]) -> bool:
+  return max(one[0], two[0]) <= min(one[3], two[3]) and max(one[1], two[1]) <= min(one[4], two[4])
 
-  # Turn bricks into list [x1, y1, z1, x2, y2, z2] and sort by z (i.e. height)
-  bricks = [list(map(int, line.replace('~', ',').split(','))) for line in inp.splitlines()]
-  bricks.sort(key=lambda brick: brick[2])
-
+def drop_bricks(bricks: list[list[int,int,int,int,int,int]]):
   # Move bricks all the way down starting at lowest brick
   for i, brick in enumerate(bricks):
     max_z = 1
@@ -19,10 +14,8 @@ def part_one(inp: str):
       # Adjust z positions of dropped brick starting with top first to use old start
       brick[5] -= brick[2] - max_z
       brick[2] = max_z
-  
-  # After dropping the bricks, sort by z again
-  bricks.sort(key=lambda brick: brick[2])
 
+def get_brick_support_maps(bricks: list[list[int,int,int,int,int,int]]) -> tuple[dict[int, set[int]], dict[int, set[int]]]:
   # Determine which bricks support which other bricks, and which bricks are supported by which other bricks (bidirectional maps)
   k_supports = {a: set() for a in range(len(bricks))}
   k_supported_by = {b: set() for b in range(len(bricks))}
@@ -32,6 +25,20 @@ def part_one(inp: str):
       if overlapping(lower, upper) and lower[5] + 1 == upper[2]:
         k_supports[lower_i].add(upper_i) 
         k_supported_by[upper_i].add(lower_i)
+  
+  return (k_supports, k_supported_by)
+
+# NOTE: Problem assumes z index is horizontal!
+def part_one(inp: str):
+  # Turn bricks into list [x1, y1, z1, x2, y2, z2] and sort by z (i.e. height)
+  bricks = [list(map(int, line.replace('~', ',').split(','))) for line in inp.splitlines()]
+  bricks.sort(key=lambda brick: brick[2])
+
+  # Move bricks all the way down starting at lowest brick
+  drop_bricks(bricks)
+
+  # Determine which bricks support which other bricks, and which bricks are supported by which other bricks (bidirectional maps)
+  k_supports, k_supported_by = get_brick_support_maps(bricks)
 
   # Count bricks that can be disintegrated
   ans = 0
