@@ -1,3 +1,5 @@
+import sympy
+
 class Hailstone:
   def __init__(self, x, y, z, vx, vy, vz):
     self.x = x
@@ -51,9 +53,29 @@ def part_one(inp: str, bounds: tuple[int,int]):
   print('Answer 1 is:', ans)
   pass
 
+def part_two(inp: str):
+  hailstones: list[Hailstone] = []
+  for line in inp.splitlines():
+    h = Hailstone(*map(int, line.replace('@',',').split(',')))
+    hailstones.append(h)
+  
+  # "Init" our sympy symbols
+  rx, ry, rz, rvx, rvy, rvz = sympy.symbols('rx, ry, rz, rvx, rvy, rvz')
+
+  equations = [] # Will hold our equations to solve using sympy
+  for h in hailstones:
+    equations.append((rx - h.x) * (h.vy - rvy) - (ry - h.y) * (h.vx - rvx)) # = 0
+    equations.append((ry - h.y) * (h.vz - rvz) - (rz - h.z) * (h.vy - rvy))
+    # NOTE: No need to add first == third due to transitivity 
+  
+  answers = sympy.solve(equations)
+  print('Answer 2 is:',answers[0][rx] + answers[0][ry] + answers[0][rz])
+  pass
+
 # Input
 i = open('./input.txt').read().strip()
 e = open('./example.txt').read().strip()
 
-# part_one(e, (7,27))
+part_one(e, (7,27))
 part_one(i, (200000000000000, 400000000000000))
+part_two(i)
