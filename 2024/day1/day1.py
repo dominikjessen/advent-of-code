@@ -1,3 +1,10 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from utils.utils import *
+
 ############
 #  Part 1  #
 ############
@@ -28,7 +35,7 @@ print('Example')
 print(40 * '=')
 
 part_one(example)
-part_two(example)
+# part_two(example)
 
 # Solve input
 
