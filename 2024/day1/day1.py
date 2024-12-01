@@ -38,7 +38,29 @@ def part_one(inp: str):
 ############
 
 def part_two(inp: str):
-  print('Answer 2 is:')
+  r = inp.splitlines()
+  s = 0
+
+  left = []
+  right_counts = dict()
+
+  for (i, row) in enumerate(r):
+    # Parse numbers
+    l = row[0:5]
+    r = row[-5:]
+
+    left.append(l)
+
+    if r in right_counts:
+      right_counts[r] += 1
+    else:
+      right_counts[r] = 1
+
+  for (i, num) in enumerate(left):
+    if num in right_counts:
+      s += int(num) * right_counts[num]
+
+  print('Answer 2 is:', s)
 
 
 #############
@@ -54,7 +76,7 @@ inp = open('./input.txt').read().strip()
 print('Example')
 print(40 * '=')
 
-part_one(example)
+# part_one(example)
 # part_two(example)
 
 # Solve input
@@ -63,4 +85,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
