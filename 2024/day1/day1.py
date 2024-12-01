@@ -10,7 +10,27 @@ from utils.utils import *
 ############
 
 def part_one(inp: str):
-  print('Answer 1 is:')
+  r = get_input_rows(inp)
+  s = 0
+
+  left = []
+  right = []
+
+  for (i, row) in enumerate(r):
+    # Parse numbers
+    l = int(row[0:5])
+    r = int(row[-5:])
+
+    left.append(l)
+    right.append(r)
+
+  left.sort()
+  right.sort()
+
+  for i in range(len(left)):
+    s += abs(left[i] - right[i])
+
+  print('Answer 1 is:', s)
 
 
 ############
@@ -39,8 +59,8 @@ part_one(example)
 
 # Solve input
 
-# print('\nSolution')
-# print(40 * '=')
+print('\nSolution')
+print(40 * '=')
 
-# part_one(inp)
+part_one(inp)
 # part_two(inp)
