@@ -17,9 +17,8 @@ def part_one(inp: str):
   right = []
 
   for (i, row) in enumerate(r):
-    # Parse numbers
-    l = int(row[0:5])
-    r = int(row[-5:])
+    l, r = row.split()
+    l, r = int(l), int(r)
 
     left.append(l)
     right.append(r)
@@ -45,9 +44,7 @@ def part_two(inp: str):
   right_counts = dict()
 
   for (i, row) in enumerate(r):
-    # Parse numbers
-    l = row[0:5]
-    r = row[-5:]
+    l, r = row.split()
 
     left.append(l)
 
@@ -76,8 +73,8 @@ inp = open('./input.txt').read().strip()
 print('Example')
 print(40 * '=')
 
-# part_one(example)
-# part_two(example)
+part_one(example)
+part_two(example)
 
 # Solve input
 
