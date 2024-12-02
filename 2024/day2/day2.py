@@ -20,6 +20,7 @@ def part_one(inp: str):
   for line in r:
     nums = line.split()
     nums = list(map(int, nums))
+
     if is_valid(nums, 1, 3):
       count += 1
 
@@ -31,7 +32,18 @@ def part_one(inp: str):
 ############
 
 def part_two(inp: str):
-  print('Answer 2 is:')
+  r = get_input_rows(inp)
+  count = 0
+
+  for line in r:
+    nums = line.split()
+    nums = list(map(int, nums))
+
+    # Test if removing any index leads to safe row
+    if any(is_valid(nums[:i] + nums[i+1:], 1, 3) for i in range(len(nums))):
+      count += 1
+
+  print('Answer 2 is:', count)
 
 
 #############
@@ -52,8 +64,8 @@ part_two(example)
 
 # Solve input
 
-# print('\nSolution')
-# print(40 * '=')
+print('\nSolution')
+print(40 * '=')
 
-# part_one(inp)
-# part_two(inp)
+part_one(inp)
+part_two(inp)
