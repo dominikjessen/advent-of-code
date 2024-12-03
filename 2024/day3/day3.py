@@ -14,11 +14,8 @@ from utils.utils import *
 
 def mul_sum(inp: str) -> int:
   matches = re.findall('mul\(\d{1,3},\d{1,3}\)', inp)
-  s = 0
-  for m in matches:
-    s += functools.reduce(operator.mul, map(int,  m[4:-1].split(',')), 1)
   
-  return s
+  return sum(functools.reduce(operator.mul, map(int,  m[4:-1].split(',')), 1) for m in matches)
 
 def part_one(inp: str):
   print('Answer 1 is:', mul_sum(inp))
