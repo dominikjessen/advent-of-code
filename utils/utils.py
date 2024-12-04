@@ -39,7 +39,7 @@ def get_adjacent_coords(
     include_diagonals: bool = False
 ) -> List[Tuple[int, int]]:
     directions = [
-        (-1, 0)   # Up
+        (-1, 0),  # Up
         (0, 1),   # Right
         (1, 0),   # Down
         (0, -1),  # Left

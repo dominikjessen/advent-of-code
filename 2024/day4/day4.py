@@ -10,7 +10,31 @@ from utils.utils import *
 ############
 
 def part_one(inp: str):
-  print('Answer 1 is:')
+  G = get_input_grid_char(inp)
+  count = 0
+
+  for r in range(len(G)):
+    for c in range(len(G[r])):
+      if G[r][c] == 'X':
+        dirs = get_adjacent_coords(0,0,True)
+        coords = get_adjacent_coords(r,c,True)
+
+        while coords:
+          mr,mc = coords.pop()
+          dr,dc = dirs.pop()
+
+          if is_valid_move(G, mr, mc) and G[mr][mc] == 'M':
+            ar = mr + dr
+            ac = mc + dc
+
+            if is_valid_move(G, ar, ac) and G[ar][ac] == 'A':
+              sr = ar + dr
+              sc = ac + dc
+
+              if is_valid_move(G, sr, sc) and G[sr][sc] == 'S':
+                count += 1
+
+  print('Answer 1 is:', count)
 
 
 ############
@@ -39,8 +63,8 @@ part_two(example)
 
 # Solve input
 
-# print('\nSolution')
-# print(40 * '=')
+print('\nSolution')
+print(40 * '=')
 
-# part_one(inp)
+part_one(inp)
 # part_two(inp)
