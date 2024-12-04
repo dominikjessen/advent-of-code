@@ -42,8 +42,26 @@ def part_one(inp: str):
 ############
 
 def part_two(inp: str):
-  print('Answer 2 is:')
+  G = get_input_grid_char(inp)
+  count = 0
 
+  for r in range(len(G)):
+    for c in range(len(G[r])):
+      if G[r][c] == 'A':
+
+        # Major diagonal (\)
+        major_dr = -1
+        major_dc = -1
+
+        # Minor diagonal (/)
+        minor_dr = -1
+        minor_dc = 1
+
+        # Anyone need a super long if statement?
+        if ((is_valid_move(G, r + major_dr, c + major_dc) and G[r + major_dr][c + major_dc] == 'M' and is_valid_move(G, r - major_dr, c - major_dc) and G[r - major_dr][c - major_dc] == 'S') or (is_valid_move(G, r + major_dr, c + major_dc) and G[r + major_dr][c + major_dc] == 'S' and is_valid_move(G, r - major_dr, c - major_dc) and G[r - major_dr][c - major_dc] == 'M')) and ((is_valid_move(G, r + minor_dr, c + minor_dc) and G[r + minor_dr][c + minor_dc] == 'M' and is_valid_move(G, r - minor_dr, c - minor_dc) and G[r - minor_dr][c - minor_dc] == 'S') or (is_valid_move(G, r + minor_dr, c + minor_dc) and G[r + minor_dr][c + minor_dc] == 'S' and is_valid_move(G, r - minor_dr, c - minor_dc) and G[r - minor_dr][c - minor_dc] == 'M')):
+          count += 1
+
+  print('Answer 2 is:', count)
 
 #############
 #  Solving  #
@@ -67,4 +85,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
