@@ -42,7 +42,31 @@ def part_one(inp: str):
 ############
 
 def part_two(inp: str):
-  print('Answer 2 is:')
+  lines = get_input_rows(inp)
+  s = 0
+
+  for l in lines:
+    sol, nums = l.split(':')
+    sol = int(sol)
+    nums = [int(x) for x in nums.split()]
+
+    stack = []
+    stack.append((nums[0], 1))
+
+    while stack:
+      curr, i = stack.pop()
+
+      if curr == sol and i == len(nums):
+        s += sol
+        break
+
+      if i == len(nums):
+        continue
+
+      stack.append((curr + nums[i], i+1))
+      stack.append((curr * nums[i], i+1))
+      stack.append((int(str(curr) + str(nums[i])), i+1)) # Lul really, this is part 2???
+  print('Answer 2 is:', s)
 
 
 #############
@@ -67,4 +91,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
