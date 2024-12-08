@@ -57,9 +57,49 @@ def part_one(inp: str):
 #  Part 2  #
 ############
 
-def part_two(inp: str):
-  print('Answer 2 is:')
+def get_resonant_antinode_positions(G: List[List[str]], nodes: List[Tuple[int,int]]) -> Set[Tuple[int,int]]:
+  pairs = combinations(nodes, 2)
+  antinodes = set()
 
+  for p in pairs:
+    p1,p2 = p
+    d1,d2 = p2[0] - p1[0], p2[1] - p1[1]
+    
+    # Expand backwards
+    a1 = p1
+    while is_valid_move(G, a1[0], a1[1]):
+      antinodes.add(a1)
+      a1 = ( a1[0] - d1, a1[1] - d2)
+
+    # Expand forwards
+    a2 = p2
+    while is_valid_move(G, a2[0], a2[1]):
+      antinodes.add(a2)
+      a2 = ( a2[0] + d1, a2[1] + d2)
+
+  return antinodes
+
+def part_two(inp: str):
+  G = get_input_grid_char(inp)
+
+  antennas = {}
+  antinodes = set()
+
+  # Find all positions per antenna type
+  for r in range(len(G)):
+    for c in range(len(G[r])):
+      if G[r][c] != '.':
+        if G[r][c] not in antennas:
+          antennas[G[r][c]] = []
+
+        antennas[G[r][c]].append((r,c))
+
+  # Find all resonant antinodes and do a set union
+  for v in antennas.values():
+    k_antinodes = get_resonant_antinode_positions(G, v)
+    antinodes |= k_antinodes
+
+  print('Answer 2 is:', len(antinodes))
 
 #############
 #  Solving  #
@@ -86,4 +126,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
