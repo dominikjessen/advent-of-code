@@ -46,7 +46,15 @@ def part_one(inp: str):
 ############
 
 def part_two(inp: str):
-  print('Answer 2 is:')
+  stones = defaultdict(int)
+
+  for s in inp.split():
+    stones[s] += 1
+  
+  for n in range(75):
+    stones = blink(stones)
+
+  print('Answer 2 is:', sum(stones.values()))
 
 
 #############
@@ -55,7 +63,6 @@ def part_two(inp: str):
 
 # Input
 example1 = open('./example1.txt').read().strip()
-example2 = open('./example2.txt').read().strip()
 inp = open('./input.txt').read().strip()
 
 # Solve example
@@ -66,16 +73,10 @@ print(40 * '=')
 part_one(example1)
 part_two(example1)
 
-# print('\nExample 2')
-# print(40 * '=')
-
-# part_one(example2)
-# part_two(example2)
-
 # Solve input
 
 print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
