@@ -54,7 +54,42 @@ def part_one(inp: str):
 ############
 
 def part_two(inp: str):
-  print('Answer 2 is:')
+  G = get_input_grid_int(inp)
+
+  trail_heads = []
+
+  rows = len(G)
+  cols = len(G[0])
+
+  # Get all trail_heads
+  for r in range(rows):
+    for c in range(cols):
+      if G[r][c] == 0:
+        trail_heads.append((r,c, 0))
+  
+  # Explore all trail_heads for their hiking score
+  s = 0
+
+  for t in trail_heads:
+    # Now we want paths to peaks for the rating
+    count = 0
+    stack = [t]
+
+    while stack:
+      r,c,height = stack.pop()
+
+      # Found trail end, stop exploring this path
+      if height == 9:
+        count += 1
+        continue
+
+      # Add next valid moves (neighbor, valid grid move, and height of curr_h + 1)
+      for nr,nc in get_adjacent_coords(r,c):
+        if is_valid_move(G, nr,nc) and G[nr][nc] == height + 1:
+          stack.append((nr,nc, G[nr][nc]))
+
+    s += count
+  print('Answer 2 is:', s)
 
 
 #############
@@ -79,4 +114,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
