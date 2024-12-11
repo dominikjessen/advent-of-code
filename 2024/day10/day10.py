@@ -10,7 +10,43 @@ from utils.utils import *
 ############
 
 def part_one(inp: str):
-  print('Answer 1 is:')
+  G = get_input_grid_int(inp)
+
+  trail_heads = []
+
+  rows = len(G)
+  cols = len(G[0])
+
+  # Get all trail_heads
+  for r in range(rows):
+    for c in range(cols):
+      if G[r][c] == 0:
+        trail_heads.append((r,c, 0))
+  
+  # Explore all trail_heads for their hiking score
+  s = 0
+
+  for t in trail_heads:
+    # We're looking for unique peaks not different ways of reaching the same peak, so set instead of counter
+    peaks = set()
+    stack = [t]
+
+    while stack:
+      r,c,height = stack.pop()
+
+      # Found trail end, stop exploring this path
+      if height == 9:
+        peaks.add((r,c))
+        continue
+
+      # Add next valid moves (neighbor, valid grid move, and height of curr_h + 1)
+      for nr,nc in get_adjacent_coords(r,c):
+        if is_valid_move(G, nr,nc) and G[nr][nc] == height + 1:
+          stack.append((nr,nc, G[nr][nc]))
+
+    s += len(peaks)
+
+  print('Answer 1 is:', s)
 
 
 ############
@@ -39,8 +75,8 @@ part_two(example)
 
 # Solve input
 
-# print('\nSolution')
-# print(40 * '=')
+print('\nSolution')
+print(40 * '=')
 
-# part_one(inp)
+part_one(inp)
 # part_two(inp)
