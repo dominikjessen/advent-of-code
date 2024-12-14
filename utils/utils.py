@@ -1,5 +1,6 @@
 from typing import *
 from heapq import heappush, heappop
+from collections import defaultdict
 import math
 
 T = TypeVar('T')
@@ -79,15 +80,24 @@ def manhattan_distance(p1: Tuple[int, int], p2: Tuple[int, int]) -> int:
 
 class Graph(Generic[T]):
     def __init__(self):
-        self.graph: Dict[T, List[T]] = {}
+        self.vertices: Set[T] = set()
+        self.edges: DefaultDict[T, DefaultDict[T, int]] = defaultdict(dict)
     
-    def add_edge(self, node: T, neighbor: T) -> None:
-        if node not in self.graph:
-            self.graph[node] = []
-        self.graph[node].append(neighbor)
+    def add_edge(self, node: T, neighbor: T, weight = 0) -> None:
+        self.vertices.add(node)
+        self.vertices.add(neighbor)
+        self.edges[node][neighbor] = weight
     
-    def get_neighbors(self, node: T) -> List[T]:
-        return self.graph.get(node, [])
+    def get_neighbors(self, node: T) -> DefaultDict[T, int]:
+        return self.edges.get(node)
+
+    def get_vertices(self) -> Set[T]:
+        return self.vertices
+    
+    def print_graph(self) -> None:
+        for node, neighbors in self.edges.items():
+            for neighbor, weight in neighbors.items():
+                print(f"Edge from {node} to {neighbor} with weight {weight}")
 
 def breadth_first_search(
     graph: Graph[T], 
