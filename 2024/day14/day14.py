@@ -2,6 +2,7 @@ import sys
 import os
 import operator
 import functools
+from PIL import Image, ImageDraw
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -55,9 +56,48 @@ def part_one(inp: str, max_x: int, max_y: int):
 #  Part 2  #
 ############
 
-def part_two(inp: str):
-  print('Answer 2 is:')
+def make_grid_image(G: List[List[str]], i: int):
+  cell_size = 10
+  width = len(G[0]) * cell_size
+  height = len(G) * cell_size
 
+  # Create black background image
+  img = Image.new('RGB', (width, height), color = (0, 0, 0))
+  draw = ImageDraw.Draw(img)
+
+  # Fill robots white
+  for y, row in enumerate(G):
+      for x, char in enumerate(row):
+          if char != '':
+              draw.rectangle([(x * cell_size, y * cell_size), ((x + 1) * cell_size - 1, (y + 1) * cell_size - 1)], fill=(255, 255, 255))
+
+  img.save(os.path.join('./images', f"0000{i}grid.bmp"))
+
+def part_two(inp: str, max_x: int, max_y: int):
+  r = get_input_rows(inp)
+  robots = []
+  velocities = []
+
+  # Get robot start positions
+  for line in r:
+      p, v = line.split()
+      x, y = map(int, p.split('=')[1].split(','))
+      vx, vy = map(int, v.split('=')[1].split(','))
+      robots.append((x,y))
+      velocities.append((vx,vy))
+  
+  # Start moving robots
+  for i in range(2):
+    G = [['' for x in range(max_x + 1)] for y in range(max_y + 1)]
+    for j in range(len(robots)):
+      x,y = robots[j]
+      vx,vy = velocities[j]
+      x,y = move(x, y, vx, vy, max_x, max_y)
+      robots[j] = (x,y)
+      G[y][x] = 'X'
+
+    # Make an image
+    make_grid_image(G, i)
 
 #############
 #  Solving  #
@@ -71,7 +111,7 @@ print('Example')
 print(40 * '=')
 
 part_one(example, 10, 6)
-part_two(example)
+# part_two(example, 10, 6)
 
 # Solve input
 
@@ -79,4 +119,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp, 100, 102)
-# part_two(inp)
+part_two(inp, 100, 102)
