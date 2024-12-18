@@ -59,8 +59,32 @@ def part_one(inp: str):
 #  Part 2  #
 ############
 
+def find(program: List[int], solution: int) -> int:
+  if program == []:
+    return solution >> 3 # See below...
+  
+  # My program until out()
+  for x in range(8):
+    a = solution + x
+
+    b = a % 8
+    b ^= 3
+    c = a >> b
+    b ^= 5
+    a <<= 3 # This is happening in my final loop going up, so reserve it for answer
+    b ^= c
+
+    if b % 8 == program[-1]:
+      s = find(program[:-1], a)
+      if s == None:
+        continue
+
+      return s
+    
 def part_two(inp: str):
-  print('Answer 2 is:')
+  _,p = inp.split('\n\n')
+  p = list(map(int,p.split(': ')[1].split(',')))
+  print('Answer 2 is:', find(p, 0))
 
 
 #############
@@ -77,7 +101,6 @@ print('Example')
 print(40 * '=')
 
 part_one(example)
-part_two(example)
 
 # Solve input
 
@@ -85,4 +108,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
