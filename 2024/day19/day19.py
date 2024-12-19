@@ -42,7 +42,28 @@ def part_one(inp: str):
 ############
 
 def part_two(inp: str):
-  print('Answer 2 is:')
+  t,d = inp.split('\n\n')
+  t = set(t.split(', '))
+  largest_t = max(map(len, t))
+  d = d.splitlines()  
+
+  # Check longest possible towel first, then see if remaining towel design is possible
+  # Recurse and check smaller towels until no towel works (False) or design is made (True)
+  # Needs memoization to run in time (sub-designs of designs will always have the same answer)
+  @cache
+  def ways_design_possible(d: str) -> int:
+    if d == '':
+      return 1
+    
+    count = 0
+    
+    for i in range(min(len(d), largest_t) + 1):
+      if d[:i] in t:
+        count += ways_design_possible(d[i:])
+      
+    return count
+
+  print('Answer 2 is:', sum(ways_design_possible(design) for design in d))
 
 
 #############
@@ -67,4 +88,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
