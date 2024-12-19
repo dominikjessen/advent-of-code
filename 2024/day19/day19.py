@@ -47,9 +47,7 @@ def part_two(inp: str):
   largest_t = max(map(len, t))
   d = d.splitlines()  
 
-  # Check longest possible towel first, then see if remaining towel design is possible
-  # Recurse and check smaller towels until no towel works (False) or design is made (True)
-  # Needs memoization to run in time (sub-designs of designs will always have the same answer)
+  # We count all arrangements this time instead of possible/not possible. If not possible count will stay at 0
   @cache
   def ways_design_possible(d: str) -> int:
     if d == '':
