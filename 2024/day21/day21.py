@@ -11,22 +11,10 @@ from utils.utils import *
 #  Part 1  #
 ############
 
-num_pad = [
-  ['7', '8', '9'],
-  ['4', '5', '6'],
-  ['1', '2', '3'],
-  [None, '0', 'A'],
-]
-
-dir_pad = [
-  [None, '^', 'A'],
-  ['<', 'v', '>'],
-]
-
 def get_next_moves(r: int, c: int) -> List[Tuple[int,int,str]]:
   return [(r - 1, c, '^'), (r, c + 1, '>'), (r + 1, c, 'v'), (r, c - 1, '<')]
 
-def pad_sequence(s: str, pad: List[str | None]) -> List[str]:
+def get_sequences(pad: List[str | None]) -> List[str]:
   pos = {}
   # Get all pad positions
   for r in range(len(pad)):
@@ -62,22 +50,41 @@ def pad_sequence(s: str, pad: List[str | None]) -> List[str]:
         break
 
       seqs[(a,b)] = options
-  
+    
+  return seqs
+
+def pad_sequence(s: str, seqs: List[str]) -> List[str]:
   inputs = [seqs[(x,y)] for x,y in zip('A' + s, s)] # NOTE: robots always start on 'A' key
   return [''.join(x) for x in product(*inputs)]
+
+num_pad = [
+  ['7', '8', '9'],
+  ['4', '5', '6'],
+  ['1', '2', '3'],
+  [None, '0', 'A'],
+]
+
+dir_pad = [
+  [None, '^', 'A'],
+  ['<', 'v', '>'],
+]
+
+# Precompute keypad shortest sequences for all possible input pairs
+num_seqs = get_sequences(num_pad)
+dir_seqs = get_sequences(dir_pad)
 
 def part_one(inp: str):
   s = 0
   for l in get_input_rows(inp):
     # Robot 2 -> Direct
-    r1 = pad_sequence(l, num_pad) # This is guaranteed to be all shortest options
+    r1 = pad_sequence(l, num_seqs) # This is guaranteed to be all shortest options
 
     # Robot 2 & 3 -> Intermediate
     curr_r = r1
     for _ in range(2):
       poss_seq = []
       for seq in curr_r:
-        poss_seq += pad_sequence(seq, dir_pad) # Need to concat the lists, not append
+        poss_seq += pad_sequence(seq, dir_seqs) # Need to concat the lists, not append
       min_l = min(map(len, poss_seq))
       curr_r = [seq for seq in poss_seq if len(seq) == min_l] # Filter by only the shortest input sequences
 
