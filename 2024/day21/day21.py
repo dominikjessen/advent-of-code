@@ -1,3 +1,4 @@
+from functools import cache
 import sys
 import os
 from collections import deque
@@ -93,13 +94,44 @@ def part_one(inp: str):
 
   print('Answer 1 is:', s)
 
-
 ############
 #  Part 2  #
 ############
 
 def part_two(inp: str):
-  print('Answer 2 is:')
+  dir_lengths = {k: len(v[0]) for k,v in dir_seqs.items()}
+
+  # Compute the shortest input length from any character a to any other character b for a given depth (i.e. nth robot)
+  @cache
+  def input_len(a: str, b: str, depth: int = 25) -> int:
+    # We directly control, so just look at the shortest length
+    if depth == 1:
+      return dir_lengths[(a,b)]
+    
+    # Else look at all pairs and recurse keeping a rolling best counter
+    best = sys.maxsize
+    for seq in dir_seqs[(a,b)]:
+      length = 0
+      for x,y in zip('A' + seq, seq):
+        length += input_len(x, y, depth - 1)
+
+      best = min(best, length)
+
+    return best
+
+  s = 0
+  for l in get_input_rows(inp):
+    r1 = pad_sequence(l, num_seqs)
+    best = sys.maxsize
+    for seq in r1:
+      length = 0
+      for x,y in zip('A' + seq, seq):
+        length += input_len(x, y)
+      best = min(best, length)
+    
+    s += best * int(l[:-1])
+
+  print('Answer 2 is:', s)
 
 
 #############
@@ -124,4 +156,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
