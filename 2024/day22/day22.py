@@ -1,6 +1,7 @@
 from math import floor
 import sys
 import os
+from collections import defaultdict
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -34,7 +35,32 @@ def part_one(inp: str):
 ############
 
 def part_two(inp: str):
-  print('Answer 2 is:')
+  nums = list(map(int, get_input_rows(inp)))
+
+  sequences = {}
+
+  for n in nums:
+    prices = [n % 10]
+    for _ in range(2000):
+      n = transform_num(n)
+      prices.append(n % 10)
+  
+    seen = set()
+    for i in range(len(prices) - 4):
+      a,b,c,d,e = prices[i:i+5]
+      diffs = (b-a, c-b, d-c, e-d)
+
+      if diffs in seen:
+        continue
+
+      seen.add(diffs)
+
+      if diffs not in sequences: 
+        sequences[diffs] = 0
+
+      sequences[diffs] += e
+
+  print('Answer 2 is:', max(sequences.values()))
 
 
 #############
@@ -59,4 +85,4 @@ print('\nSolution')
 print(40 * '=')
 
 part_one(inp)
-# part_two(inp)
+part_two(inp)
